@@ -1,0 +1,24 @@
+data:
+  # The Data Volume Container used to mount a volume to store our persistent data
+  # https://docs.docker.com/userguide/dockervolumes/#creating-and-mounting-a-data-volume-container
+  image: mysql:5.7
+  volumes:
+    # Mount this path as a volume to store our MySQL files
+    - /var/lib/mysql
+  command: /bin/true
+    # Run a trivial command to exit quickly. Volumes don't need a running container.
+
+db:
+  # The database container. Built from the db/Dockerfile.
+  build: db
+  restart: always
+
+api:
+  # The api server container. Built from the api/Dockerfile.
+  build: api
+  restart: always
+
+web:
+  # The web server container. Built from the web/Dockerfile.
+  build: web
+  restart: always

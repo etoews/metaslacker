@@ -1,0 +1,48 @@
+data:
+  extends:
+    file: docker-compose-common.yml
+    service: data
+
+db:
+  extends:
+    file: docker-compose-common.yml
+    service: db
+  expose:
+    # Expose port 3306 so it's only visibile on the container, not the host
+    - "3306"
+  environment:
+    # Environment variables to configure MySQL on startup.
+    # Environment variables with only a key are resolved to their values on
+    # the machine Compose is running on. We do this to prevent ourselves
+    # from committing sensitive data to GitHub.
+    - MYSQL_USER
+    - MYSQL_PASSWORD
+    - MYSQL_ROOT_PASSWORD
+    - MYSQL_DATABASE=guestbook
+  volumes_from:
+    # Mount the volumes from the data container to store our MySQL files
+    - data
+
+api:
+  extends:
+    file: docker-compose-common.yml
+    service: api
+  expose:
+    # Expose port 8000 so it's only visibile on the container, not the host
+    - "8000"
+  links:
+    # Link to the db service to store state
+    - db:db
+  command: gunicorn api:api --bind 0.0.0.0:8000
+    # Run Gunicorn to serve api requests
+
+web:
+  extends:
+    file: docker-compose-common.yml
+    service: web
+  ports:
+    # Publish port 80 so it's visible on the host
+    - "80:80"
+  links:
+    # Link to the api to serve requests
+    - api:api
