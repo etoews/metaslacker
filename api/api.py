@@ -12,7 +12,7 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(levelname)s: %(message)s')
 logger = logging.getLogger(__name__)
-logger.debug("Welcome to Propeller")
+logger.debug("Welcome to MetaSlacker")
 
 
 SQLALCHEMY_DATABASE_URI = \
@@ -33,12 +33,13 @@ db = SQLAlchemy(api)
 
 @api.route('/', methods=['GET', 'POST'])
 def index():
+    # TODO: verify token!
     if request.method == 'GET':
         print(request.args)
-        return 'GET Welcome to Propeller'
+        return 'GET Welcome to MetaSlacker'
     elif request.method == 'POST':
         print(request.headers)
-        return 'POST Welcome to Propeller'
+        return 'POST Welcome to MetaSlacker'
 
 @api.route('/create', methods=['POST'])
 def register():
@@ -63,7 +64,7 @@ class User(db.Model):
 
     @property
     def api_key(self):
-        raise AttributeError('password is not a readable attribute')
+        raise AttributeError('api_key is not a readable attribute')
 
     @api_key.setter
     def api_key(self, api_key):

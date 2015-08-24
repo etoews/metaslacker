@@ -1,4 +1,4 @@
-# propeller
+# metaslacker
 
 ## Docker Docker Docker
 
@@ -11,8 +11,8 @@
 ## Initialize the Environment
 
 ```
-docker-machine create --driver virtualbox propeller-dev
-eval "$(docker-machine env propeller-dev)"
+docker-machine create --driver virtualbox metaslacker-dev
+eval "$(docker-machine env metaslacker-dev)"
 docker-compose up
 ```
 
@@ -33,8 +33,8 @@ export OS_REGION_NAME=IAD
 ```
 
 ```
-docker-machine create --driver rackspace propeller
-eval "$(docker-machine env propeller)"
+docker-machine create --driver rackspace metaslacker
+eval "$(docker-machine env metaslacker)"
 docker-compose --file docker-compose-prod.yml build
 docker-compose --file docker-compose-prod.yml up -d
 ```
@@ -42,7 +42,7 @@ docker-compose --file docker-compose-prod.yml up -d
 ## Initialize the Database
 
 ```
-export MYSQL_USER=propeller-admin
+export MYSQL_USER=metaslacker-admin
 export MYSQL_PASSWORD=$(hexdump -v -e '1/1 "%.2x"' -n 32 /dev/random)
 export MYSQL_ROOT_PASSWORD=$(hexdump -v -e '1/1 "%.2x"' -n 32 /dev/random)
 
@@ -52,13 +52,13 @@ docker-compose --file docker-compose-prod.yml run --rm --no-deps api python api.
 ## Secure the Environment
 
 ```
-docker-machine ssh propeller "apt-get update"
-docker-machine ssh propeller "apt-get -y install fail2ban"
-docker-machine ssh propeller "ufw default deny"
-docker-machine ssh propeller "ufw allow ssh"
-docker-machine ssh propeller "ufw allow http"
-docker-machine ssh propeller "ufw allow 2376" # Docker
-docker-machine ssh propeller "ufw --force enable"
+docker-machine ssh metaslacker "apt-get update"
+docker-machine ssh metaslacker "apt-get -y install fail2ban"
+docker-machine ssh metaslacker "ufw default deny"
+docker-machine ssh metaslacker "ufw allow ssh"
+docker-machine ssh metaslacker "ufw allow http"
+docker-machine ssh metaslacker "ufw allow 2376" # Docker
+docker-machine ssh metaslacker "ufw --force enable"
 ```
 
 ## Deploy Changes to Remote
@@ -71,7 +71,7 @@ docker-compose --file docker-compose-prod.yml up -d --x-smart-recreate
 ## Work with the Database
 
 ```
-docker run --rm --link propeller_db_1:db mysql:5.7 sh -c \
+docker run --rm --link metaslacker_db_1:db mysql:5.7 sh -c \
   'exec mysql \
   --host=$DB_PORT_3306_TCP_ADDR \
   --user=root \
@@ -80,7 +80,7 @@ docker run --rm --link propeller_db_1:db mysql:5.7 sh -c \
   --execute="show tables;" \
   --table'
 
-docker run --rm --link propeller_db_1:db mysql:5.7 sh -c \
+docker run --rm --link metaslacker_db_1:db mysql:5.7 sh -c \
   'exec mysqldump \
   --host=$DB_PORT_3306_TCP_ADDR \
   --user=root \
