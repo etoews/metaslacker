@@ -15,9 +15,9 @@ db:
     # We don't care about commiting these creds to GitHub because they're only
     # for our local development environment
     - MYSQL_ROOT_PASSWORD=my-root-password-dev
-    - MYSQL_DATABASE=guestbook-dev
-    - MYSQL_USER=guestbook-admin
-    - MYSQL_PASSWORD=my-guestbook-admin-password-dev
+    - MYSQL_DATABASE=propeller-dev
+    - MYSQL_USER=propeller-admin
+    - MYSQL_PASSWORD=my-propeller-admin-password-dev
   volumes_from:
     # Mount the volumes from the data container to store our MySQL files
     - data

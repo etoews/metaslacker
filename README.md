@@ -19,7 +19,7 @@ docker-compose up
 ## Initialize the Database
 
 ```
-docker-compose run --rm --no-deps app python app.py create_db
+docker-compose run --rm --no-deps api python api.py create_db
 ```
 
 # Remote
@@ -46,7 +46,7 @@ export MYSQL_USER=propeller-admin
 export MYSQL_PASSWORD=$(hexdump -v -e '1/1 "%.2x"' -n 32 /dev/random)
 export MYSQL_ROOT_PASSWORD=$(hexdump -v -e '1/1 "%.2x"' -n 32 /dev/random)
 
-docker-compose --file docker-compose-prod.yml run --rm --no-deps app python app.py create_db
+docker-compose --file docker-compose-prod.yml run --rm --no-deps api python api.py create_db
 ```
 
 ## Secure the Environment

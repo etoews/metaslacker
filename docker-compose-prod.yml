@@ -18,7 +18,7 @@ db:
     - MYSQL_USER
     - MYSQL_PASSWORD
     - MYSQL_ROOT_PASSWORD
-    - MYSQL_DATABASE=guestbook
+    - MYSQL_DATABASE=propeller
   volumes_from:
     # Mount the volumes from the data container to store our MySQL files
     - data

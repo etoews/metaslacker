@@ -1,9 +1,11 @@
 import logging
 import os
 
-from flask import Flask
+from flask import Flask, request
 from flask.ext.script import Manager
 from flask.ext.sqlalchemy import SQLAlchemy
+
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 logging.basicConfig(
@@ -29,25 +31,55 @@ api.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 manager = Manager(api)
 db = SQLAlchemy(api)
 
-
-@api.route('/')
+@api.route('/', methods=['GET', 'POST'])
 def index():
-    return 'Welcome to Propeller'
+    if request.method == 'GET':
+        print(request.args)
+        return 'GET Welcome to Propeller'
+    elif request.method == 'POST':
+        print(request.headers)
+        return 'POST Welcome to Propeller'
+
+@api.route('/create', methods=['POST'])
+def register():
+    print(request.headers)
+
+    username = request.headers['username']
+    api_key = request.headers['text']
+
+    user = User(username=username, api_key=api_key)
+    db.session.add(user)
+    db.session.commit()
+
+    return 'User {} created!'.format(username)
 
 
-class Guest(db.Model):
-    __tablename__ = 'guests'
+class User(db.Model):
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(256), nullable=False)
+    username = db.Column(db.String(64), unique=True, index=True)
+    api_key_hash = db.Column(db.String(128))
+
+    @property
+    def api_key(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @api_key.setter
+    def api_key(self, api_key):
+        self.api_key_hash = generate_password_hash(api_key)
+
+    def verify_api_key(self, api_key):
+        return check_password_hash(self.api_key_hash, api_key)
 
     def __repr__(self):
-        return "[Guest: id={}, name={}]".format(self.id, self.name)
+        return "[User: id={}, username={}]".format(self.id, self.username)
 
 
 @manager.command
 def create_db():
     logger.debug("create_db")
+    logger.debug(SQLALCHEMY_DATABASE_URI)
     api.config['SQLALCHEMY_ECHO'] = True
     db.create_all()
 
@@ -55,8 +87,8 @@ def create_db():
 def create_dummy_data():
     logger.debug("create_test_data")
     api.config['SQLALCHEMY_ECHO'] = True
-    guest = Guest(name='Steve')
-    db.session.add(guest)
+    user = User(username='Steve')
+    db.session.add(user)
     db.session.commit()
 
 @manager.command
